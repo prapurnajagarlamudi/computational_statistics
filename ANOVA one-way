@@ -1,0 +1,111 @@
+################ANOVA one-way classification#####################
+import numpy as np
+a=list(map(int,input().split()))
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+los=float(input("Enter the value of level of significance"))
+a=np.array(a)
+b=np.array(b)
+c=np.array(c)
+print(a)
+print(b)
+print(c)
+k=3
+N=len(a)+len(b)+len(c)
+print("N =",N)
+sa=np.sum(a)
+sb=np.sum(b)
+sc=np.sum(c)
+ti=[sa,sb,sc]
+tii=[sa**2/len(a),sb**2/len(b),sc**2/len(c)]
+ti=np.array(ti)
+tii=np.array(tii)
+g=np.sum(ti)
+print("G =",g)
+tn=np.sum(tii)
+print("T^2/n =",tn)
+
+
+#caluclations
+#row sum of sqaures
+rss=np.sum(a**2)+np.sum(b**2)+np.sum(c**2) 
+print("RSS =",rss) 
+#correction factor
+cf=g**2/N 
+print("CF =",cf)
+#sum of squares due to total
+sst=rss-cf
+print("SST =",sst)
+#sum of squares due to treatments
+sstr=tn-cf
+print("SSTR =",sstr)
+#sum of squares due to errors
+sse=sst-sstr
+print("SEE =",sse)
+
+
+#anova one-way classification
+import pandas as pd
+d=pd.read_excel("C:\\Users\\exam2\\Documents\\data1.xlsx")
+df=pd.DataFrame(d)
+sos=[sstr,sse,sst]
+df['sum of sqaures']=sos
+dof=[k-1,N-k,N-1]
+df['degrees of freedom']=dof
+msos=[sos[0]/dof[0],sos[1]/dof[1],'']
+df['mean sum of sqaures']=msos
+fcal=msos[0]/msos[1]
+vr=['',fcal,'']
+d['variance ratio']=vr
+print(df)
+print("Fcal =",fcal)
+
+
+#inference
+import scipy.stats as s
+ftab=s.f.ppf(1-los,k-1,N-k)
+print("Ftab =",ftab)
+if(fcal<ftab):
+    print("We accept H0")
+else:
+    print("We reject H0")
+    
+    
+#caluclating Fvalue using builtin function
+import scipy.stats
+F=scipy.stats.f_oneway(a,b,c)
+print(F)
+
+Output:
+13 10 8 11 8
+13 11 14 14 
+4 1 3 4 2 4 
+Enter the value of level of significance0.05
+[13 10  8 11  8]
+[13 11 14 14]
+[4 1 3 4 2 4]
+N = 15
+G = 120
+T^2/n = 1230.0
+
+RSS = 1262
+CF = 960.0
+SST = 302.0
+SSTR = 270.0
+SEE = 32.0
+
+ source of variation  sum of sqaures  degrees of freedom mean sum of sqaures    
+0           treatment           270.0                   2               135.0   
+1               error            32.0                  12            2.666667   
+2               total           302.0                  14                       
+
+  variance ratio  
+0                 
+1         50.625  
+2                 
+Fcal = 50.625
+
+Ftab = 3.8852938346523933
+We reject H0
+
+F_onewayResult(statistic=50.625, pvalue=1.415331629132145e-06)
