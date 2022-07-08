@@ -1,0 +1,130 @@
+#######################ANOVA two-way classification:#####################
+
+import numpy as np
+a=list(map(int,input().split()))
+b=list(map(int,input().split()))
+c=list(map(int,input().split()))
+los=float(input("Enter the value of level of significance"))
+a=np.array(a)
+b=np.array(b)
+c=np.array(c)
+print(a)
+print(b)
+print(c)
+k=3
+h=4
+
+
+N=len(a)+len(b)+len(c)
+g=np.sum(a)+np.sum(b)+np.sum(c)
+print("G =",g)
+tii=(np.sum(a))**2+(np.sum(b))**2+(np.sum(c))**2
+print("Ti^2 =",tii)
+arr=np.array([[a],[b],[c]])
+ar=np.sum(arr,axis=0)
+bj=np.sum(ar)
+print("bj =",bj)
+bjj=np.sum(ar**2)
+print("bj^2 =",bjj)
+
+
+rss=np.sum(a**2)+np.sum(b**2)+np.sum(c**2) 
+print("RSS =",rss) 
+#correction factor
+cf=g**2/N 
+print("CF =",cf)
+#sum of squares due to total
+sst=rss-cf
+print("SST =",sst)
+#sum of squares due to treatments
+sstr=(tii/h)-cf
+print("SSTR =",sstr)
+#sum of squares due to blocks
+ssb=(bjj/k)-cf
+print("SEB =",ssb)
+#sum of squares due to errors
+sse=sst-sstr-ssb
+print("SEE =",sse)
+
+
+#anova two-way classification
+import pandas as pd
+d=pd.read_excel("C:\\Users\\exam3\\Documents\\book1.xlsx")
+df=pd.DataFrame(d)
+sos=[sstr,ssb,sse,sst]
+df['sum of sqaures']=sos
+dof=[k-1,h-1,(k-1)*(h-1),(k*h)-1]
+df['degrees of freedom']=dof
+msos=[sos[0]/dof[0],sos[1]/dof[1],sos[2]/dof[2],'']
+df['mean sum of sqaures']=msos
+ftrcal=msos[0]/msos[2]
+fbcal=msos[1]/msos[2]
+vr=['',ftrcal,fbcal,'']
+d['variance ratio']=vr
+print(df)
+print("Ftr =",ftrcal)
+print("Fb =",fbcal)
+
+
+#inference
+import scipy.stats as s
+ftrtab=s.f.ppf(1-los,k-1,(k-1)*(h-1))
+print("Ftrtab =",ftrtab)
+if(ftrcal<ftrtab):
+    print("We accept H0")
+else:
+    print("We reject H0")
+
+fbtab=s.f.ppf(1-los,h-1,(k-1)*(h-1))
+print("Fbtab =",fbtab)
+if(fbcal<fbtab):
+    print("We accept H0")
+else:
+    print("We reject H0")
+    
+    
+    
+output:
+
+13 7 9 3
+6 6 3 1
+11 5 15 5
+Enter the value of level of significance0.05
+[13  7  9  3]
+[6 6 3 1]
+[11  5 15  5]
+
+
+G = 84
+Ti^2 = 2576
+bj = 84
+bj^2 = 2034
+
+
+RSS = 786
+CF = 588.0
+SST = 198.0
+SSTR = 56.0
+SEB = 90.0
+SEE =52.0
+
+
+ source of variation  sum of sqaures  degrees of freedom mean sum of sqaures  \
+0          treatments            56.0                   2                  28   
+1              blocks            90.0                   3                  30   
+2              errors            52.0                   6             8.66667   
+3               total           198.0                  11                       
+
+  variance ratio  
+0                 
+1        3.23077  
+2        3.46154  
+3                 
+Ftr = 3.230769230769231
+Fb = 3.4615384615384617
+
+
+Ftrtab = 5.143252849784718
+We accept H0
+Fbtab = 4.757062663089414
+We accept H0
