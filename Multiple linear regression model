@@ -1,0 +1,71 @@
+import numpy as np
+x1=list(map(int,input("x1: ").split()))
+x2=list(map(int,input("x2: ").split()))
+y=list(map(int,input("y: ").split()))
+a=[]
+for i in range(len(y)):
+    a.append(1)
+x=np.matrix([a,x1,x2])
+print(x.T)
+x=x.T
+y=np.matrix(y)
+y=y.T
+
+
+x=np.array(x)
+print(x)
+
+
+xtx=np.dot(x.T,x)
+print(xtx)
+xtxinverse=np.linalg.inv(xtx)
+print(xtxinverse)
+
+
+
+y=np.matrix(y)
+abc=np.dot(x.T,y)
+print(abc)
+
+
+
+xtxinxty=np.dot(xtxinverse,abc)
+print(xtxinxty)
+
+
+yhat=xtxinxty[0]+(xtxinxty[1]*x1)+(xtxinxty[2]*x2)
+print(type(yhat))
+yhat=yhat.T
+print(yhat)
+
+
+error=np.subtract(y,yhat)
+
+
+print(error)
+print(type(error))
+
+
+#sum of squares due to error
+sse=np.sum(error)
+print("SSE =",sse)
+
+
+
+#sum of squares due to total
+ybar=np.mean(y)
+print("ybar =",ybar)
+y1=np.subtract(y,ybar)
+y11= np.square(y1)
+sst=np.sum(y11)
+print("SST =",sst)
+
+
+#sum of squares due to regression
+ssr=sst-sse
+print("SSR =",ssr)
+
+
+#coefficient of determination
+r2=ssr/sst
+print("R^2 =",r2)
